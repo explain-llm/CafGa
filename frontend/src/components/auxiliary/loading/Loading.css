@@ -1,0 +1,144 @@
+.wheel {
+    width: var(--size);
+}
+
+.bar {
+    height: var(--radius);
+    width: var(--stroke);
+    position: absolute;
+    left: calc(50% - 1px);
+    bottom: 50%;
+    transform-origin: bottom;
+    animation: pulse 1s infinite ease-in-out;
+    transform: rotate(90deg);
+}
+
+@keyframes pulse1 {
+    0%,
+    50%,
+    100% {
+        transform: rotate(0deg) translateY(var(--neg-radius)) scaleY(1);
+    }
+    25% {
+        transform: rotate(0deg) translateY(calc(var(--neg-radius) - 50%))
+            scaleY(0.5);
+    }
+}
+@keyframes pulse2 {
+    0%,
+    50%,
+    100% {
+        transform: rotate(45deg) translateY(var(--neg-radius)) scaleY(1);
+    }
+    25% {
+        transform: rotate(45deg) translateY(calc(var(--neg-radius) - 50%))
+            scaleY(0.5);
+    }
+}
+@keyframes pulse3 {
+    0%,
+    50%,
+    100% {
+        transform: rotate(90deg) translateY(var(--neg-radius)) scaleY(1);
+    }
+    25% {
+        transform: rotate(90deg) translateY(calc(var(--neg-radius) - 50%))
+            scaleY(0.5);
+    }
+}
+@keyframes pulse4 {
+    0%,
+    50%,
+    100% {
+        transform: rotate(135deg) translateY(var(--neg-radius)) scaleY(1);
+    }
+    25% {
+        transform: rotate(135deg) translateY(calc(var(--neg-radius) - 50%))
+            scaleY(0.5);
+    }
+}
+@keyframes pulse5 {
+    0%,
+    50%,
+    100% {
+        transform: rotate(180deg) translateY(var(--neg-radius)) scaleY(1);
+    }
+    25% {
+        transform: rotate(180deg) translateY(calc(var(--neg-radius) - 50%))
+            scaleY(0.5);
+    }
+}
+@keyframes pulse6 {
+    0%,
+    50%,
+    100% {
+        transform: rotate(225deg) translateY(var(--neg-radius)) scaleY(1);
+    }
+    25% {
+        transform: rotate(225deg) translateY(calc(var(--neg-radius) - 50%))
+            scaleY(0.5);
+    }
+}
+@keyframes pulse7 {
+    0%,
+    50%,
+    100% {
+        transform: rotate(270deg) translateY(var(--neg-radius)) scaleY(1);
+    }
+    25% {
+        transform: rotate(270deg) translateY(calc(var(--neg-radius) - 50%))
+            scaleY(0.5);
+    }
+}
+@keyframes pulse8 {
+    0%,
+    50%,
+    100% {
+        transform: rotate(315deg) translateY(var(--neg-radius)) scaleY(1);
+    }
+    25% {
+        transform: rotate(315deg) translateY(calc(var(--neg-radius) - 50%))
+            scaleY(0.5);
+    }
+}
+
+/* Adjust animation delays to ensure continuous flow */
+.bar:nth-child(1) {
+    animation-name: pulse1;
+    animation-delay: -1s;
+}
+
+.bar:nth-child(2) {
+    animation-name: pulse2;
+    animation-delay: -0.875s;
+}
+
+.bar:nth-child(3) {
+    animation-name: pulse3;
+    animation-delay: -0.75s;
+}
+
+.bar:nth-child(4) {
+    animation-name: pulse4;
+    animation-delay: -0.625s;
+}
+
+.bar:nth-child(5) {
+    animation-name: pulse5;
+    animation-delay: -0.5s;
+}
+
+.bar:nth-child(6) {
+    animation-name: pulse6;
+    animation-delay: -0.375s;
+}
+
+.bar:nth-child(7) {
+    animation-name: pulse7;
+    animation-delay: -0.25s;
+}
+
+.bar:nth-child(8) {
+    animation-name: pulse8;
+    animation-delay: -0.125s;
+}

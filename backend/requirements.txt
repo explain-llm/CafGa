@@ -1,0 +1,16 @@
+fastapi
+pydantic
+nltk
+sacremoses
+spacy
+uvicorn
+black
+python-dotenv
+pyyaml
+openai
+torch
+transformers
+shap
+matplotlib
+numpy 
+pandas

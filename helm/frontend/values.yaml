@@ -1,0 +1,76 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+app:
+  image:
+    repository: null
+    tag: latest
+    pullPolicy: Always
+
+  # either StatefulSet, Deployment, or Job
+  type: Deployment
+
+  # IGNORED FOR JOBS.
+  replicaCount: 1
+
+  # port(s) of the container to expose
+  # port can be a number or an array if you wish to open multiple ports
+  # IGNORED FOR JOBS.
+  port: 3000
+
+  # Path for health check
+  # IGNORED FOR JOBS.
+  health: "/"
+
+  # Either "Recreate" or "RollingUpdate". For rolling updates, please make sure your images
+  # are tagged with a new version in each build.
+  # IGNORED FOR STATEFULSETS AND JOBS.
+  updateStrategy: Recreate
+
+  # IGNORED FOR JOBS.
+  readinessProbe: |
+    httpGet:
+      path: {{ .Values.app.health }}
+      {{- if eq (typeOf .Values.app.port) "[]interface {}" }}
+      port: {{ first .Values.app.port }}
+      {{- else }}
+      port: {{ .Values.app.port }}
+      {{- end }}
+    initialDelaySeconds: 3
+    timeoutSeconds: 5
+    periodSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+
+  # IGNORED FOR JOBS.
+  livenessProbe: |
+    httpGet:
+      path: {{ .Values.app.health }}
+      {{- if eq (typeOf .Values.app.port) "[]interface {}" }}
+      port: {{ first .Values.app.port }}
+      {{- else }}
+      port: {{ .Values.app.port }}
+      {{- end }}
+    initialDelaySeconds: 6
+    timeoutSeconds: 5
+    periodSeconds: 5
+    failureThreshold: 4
+    successThreshold: 1
+
+  # IGNORED FOR JOBS.
+  startupProbe: null
+
+  requests:
+    cpu: null
+    memory: null
+    ephemeralStorage: null
+    gpu: false
+  limits:
+    cpu: null
+    memory: null
+    ephemeralStorage: null
+
+  # IGNORED FOR JOBS.
+  ingress:
+    enabled: true
+    url: null

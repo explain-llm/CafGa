@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cafga"
+version = "0.0.3"
+description = "CafGa is a library that facilitates creating and evaluating grouped-attribution explanations."
+keywords = ["LLM", "XAI", "NLP", "salience", "attribution"]
+authors = [
+  { name = "Alan Boyle", email = "aboyle@student.ethz.ch"},
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License"
+]
+requires-python = ">=3.10"
+dependencies = [
+  'pip',
+  'matplotlib>=3.10.0',
+  'numpy>=2',
+  'pandas>=2',
+  'black>=25',
+  'python-dotenv>=1.0',
+  'pyyaml>=6.0',
+  'pydantic>=2.10',
+  'sacremoses>=0.1.1',
+  'openai>=1.63.0',
+  'shap==0.46.0',
+  'nltk>=3.8',
+]
+
+[tool.black]
+line-length = 99
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+)/
+'''
+
+[tool.ruff.lint.isort]
+known_first_party = ["src"]
+force_sort_within_sections = true
+

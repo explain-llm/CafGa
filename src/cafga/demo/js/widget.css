@@ -1,0 +1,4 @@
+/* @import "tailwindcss"; */
+.widget-container {
+    width: 800px; /* Set a maximum width if desired */
+}

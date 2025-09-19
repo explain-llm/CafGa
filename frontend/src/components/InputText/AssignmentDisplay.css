@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'Gardiner';
+    src: url('assets/fonts/Gardiner.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+.hieroglyphs {
+    font-family: 'Gardiner'; 
+    font-size: 20px;
+}
