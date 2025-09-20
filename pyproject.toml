@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cafga"
-version = "0.0.3"
+version = "0.0.5"
 description = "CafGa is a library that facilitates creating and evaluating grouped-attribution explanations."
 keywords = ["LLM", "XAI", "NLP", "salience", "attribution"]
 authors = [
@@ -20,7 +20,7 @@ requires-python = ">=3.10"
 dependencies = [
   'pip',
   'matplotlib>=3.10.0',
-  'numpy>=2',
+  'numpy==2.0.0',
   'pandas>=2',
   'black>=25',
   'python-dotenv>=1.0',

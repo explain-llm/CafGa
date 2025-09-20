@@ -23,10 +23,10 @@ class Operator(enum.Enum):
     # CONTRADICT = "CONTRADICT"
 
 
-class CAFGA:
+class CafGa:
     def __init__(self, model, model_params=None, explainer="KernelSHAP", explainer_params=None):
         """
-        Create a CAFGA object.
+        Create a CafGa object.
 
         params
         ------
