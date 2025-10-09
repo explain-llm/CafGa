@@ -3,6 +3,8 @@
 ## Project Links
 
 github: https://github.com/explain-llm/CafGa
+Website: https://cafga.ivia.ch/
+PyPi package: https://pypi.org/project/cafga/
 
 ## Installation
 
