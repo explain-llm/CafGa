@@ -184,7 +184,6 @@ const EditableText = (props:EditableTextProps) => {
     }
     const justifyStyle = hasLineBreak ? "justify-start" : "justify-between";
 
-
     return (
         <>
             <div className="flex flex-col gap-2 border-4 rounded-lg border-neutral-600 p-2 h-fit w-full relative ">

@@ -5,6 +5,8 @@ import { getEnumOptions } from "../../services/settings";
 import ToolTip from "../auxiliary/ToolTip";
 import WithLabel from "../auxiliary/WithLabel";
 import DropDownSelect from "../auxiliary/DropDownSelect";
+import { ThreeCircles } from "react-loader-spinner";
+
 
 interface SendBoxProps {
     handleSend: (direction:string, sampleName: string | null) => void;
@@ -56,7 +58,7 @@ const SendBox = (props: SendBoxProps) => {
             </WithLabel>
             <div className="flex flex-col w-full justify-center items-center gap-1">
                 <Button onClick={handleSend} order={1}>
-                    Send {isLoadingSample && <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>}
+                    Send {isLoadingSample && <ThreeCircles height="20" width="20" color="white" />}
                 </Button>
                 {props.numGroups >= 15 && <p className="text-slate-500 text-sm text-wrap text-justify w-full">You have {props.numGroups} groups. Please note that the resulting attributions may be less accurate.</p>}
                 

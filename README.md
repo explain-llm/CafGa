@@ -2,7 +2,7 @@
 
 ## Project Links
 
-github: https://github.com/explain-llm/CafGa
+Github: https://github.com/explain-llm/CafGa
 
 Website: https://cafga.ivia.ch/
 

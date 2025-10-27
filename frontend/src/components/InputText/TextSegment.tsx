@@ -49,6 +49,7 @@ const AttributedTextSegment = (props: SegmentProps) => {
     //     console.log("line break found in text: ", props.text);
     // }
     const grow = props.isLast || props.disableGrow ? "": "flex-grow" ;
+
     const visibilityArray =  [props.handleGoLeft !== undefined, props.handleGoUp !== undefined, props.handleGoDown !== undefined, props.handleGoRight !== undefined];
     const handleGoLeft = () => {
         props.handleGoLeft?.(props.selfId);
