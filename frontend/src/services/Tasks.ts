@@ -93,7 +93,7 @@ const exampleTasks : PredefinedTask[] = [
 const SQUAD: PredefinedTask[] = [
     {
         title: "Local Question Answering 1",
-        description: "Tesla and his fathe",
+        description: "Tesla and his father",
         input: "In 1873, Tesla returned to his birthtown, Smiljan. Shortly after he arrived, Tesla contracted cholera; he was bedridden for nine months and was near death multiple times. Tesla's father, in a moment of despair, promised to send him to the best engineering school if he recovered from the illness.",
         template: "Given the following context:\n{input}\nAnswer the following question in at most five words. If you cannot answer give an empty response.\nQuestion:\nWhat did Tesla's father promise him while he was bedridden?",
         target: "best engineering school",

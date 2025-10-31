@@ -9,11 +9,36 @@ The following describes how to run the demo.ipynb notebook and the widgets avail
     - Remark: The code was written and tested with VSCode. 
 3. (Optional) If you wish to use the predefined chatgpt model, please provide a .env file with the OPENAI_API_KEY in your working directory (where you have the notebook). 
 
-## Setup
+## Instillation
 
-1. Download the demo directory from the repository and replace the demo directory inside the cafga site package directory with this demo directory. You should replace the top-level demo directory that is in the folder with the cafga.py file. 
+1. (For those who download cafga as a pypi package) If you download cafga via pip you will still need to add the java script files. 
+    1. **Download the demo directory**:
+        From the [repository](https://github.com/explain-llm/CafGa) download the demo directory at src/cafga/demo.
+    2. **Navigate to the cafga package in site-packages**:
+    If you are using a environment manager like [conda](https://anaconda.org/anaconda/conda), the path to the cafga directory should look like this: \*path_to_envs_directory\*/\*environment name\*/lib/python\*version number\*/site-packages/cafga
+    3. **Add the demo directory to the site package**: In the cafga directory replace the existing demo folder with the one downloaded from the repository. The resulting folder structure should look like this:
+    ```
+    .
+    └── cafga/
+        ├── \_\_init\_\_.py
+        ├── cafga.py
+        ├── config.py
+        ├── containers.py
+        ├── util.py
+        ├── models
+        └── demo/
+            ├── js
+            ├── node_modules (after step 2)
+            ├── src
+            ├── package-lock.json
+            ├── package.json
+            └── tsconfig.json
+    ```
 
-2. Download npm. With npm installed navigate to the demo directory in your commandline and run
+
+
+
+2. **Install packages**: First install [npm](https://www.npmjs.com/). Then with npm installed navigate to the demo directory in your commandline and run
 
 ```
 npm install 

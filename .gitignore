@@ -14,6 +14,8 @@ ExplanationRegistry.pkl
 users
 backend/*/DevTesting
 backend/*/*/DevTesting
+
+src/cafga/docs
 # Only keep the parts of colab that we need here
 backend/ComparisonStudy/results
 backend/src/colab/deprecated
