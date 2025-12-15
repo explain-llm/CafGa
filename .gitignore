@@ -14,7 +14,7 @@ ExplanationRegistry.pkl
 users
 backend/*/DevTesting
 backend/*/*/DevTesting
-
+cafga(backup).py
 src/cafga/docs
 # Only keep the parts of colab that we need here
 backend/ComparisonStudy/results

@@ -98,7 +98,7 @@ const SQUAD: PredefinedTask[] = [
         template: "Given the following context:\n{input}\nAnswer the following question in at most five words. If you cannot answer give an empty response.\nQuestion:\nWhat did Tesla's father promise him while he was bedridden?",
         target: "best engineering school",
         operator: Operator.CONTAIN,
-        taskId: "SQUAD_0"
+        taskId: "LocalQA_0"
     },
     {
         title: "Local Question Answering 2",
@@ -107,7 +107,7 @@ const SQUAD: PredefinedTask[] = [
         template: "Given the following context:\n{input}\nAnswer the following question in at most five words. If you cannot answer give an empty response.\nQuestion:\nIn what century did the Normans first gain their separate identity?",
         target: "10th century",
         operator: Operator.CONTAIN,
-        taskId: "SQUAD_1",
+        taskId: "LocalQA_1",
     },
     {
         title: "Local Question Answering 3",
@@ -116,7 +116,7 @@ const SQUAD: PredefinedTask[] = [
         template: "Given the following context:\n{input}\nAnswer the following question as succinctly as possible. The answer should contain no more than five words. If you cannot answer then give an empty response.\nQuestion:\nWhat is an example of a mechanical barrier on leaves?",
         target: "waxy cuticle",
         operator: Operator.CONTAIN,
-        taskId: "SQUAD_2",
+        taskId: "LocalQA_2",
     },
     {
         title: "Local Question Answering 4",
@@ -125,7 +125,7 @@ const SQUAD: PredefinedTask[] = [
         template: "Given the following context:\n{input}\nAnswer the following question as succinctly as possible. The answer should contain no more than five words. If you cannot answer then give an empty response.\nQuestion:\nAt what pressure is water heated in the Rankine cycle?",
         target: "high pressure",
         operator: Operator.CONTAIN,
-        taskId: "SQUAD_3",
+        taskId: "LocalQA_3",
     },
     {
         title: "Local Question Answering 5",
@@ -134,7 +134,7 @@ const SQUAD: PredefinedTask[] = [
         template: "Given the following context:\n{input}\nAnswer the following question as succinctly as possible. The answer should contain no more than five words. If you cannot answer then give an empty response.\nQuestion:\nWhat could a teacher help in organizing?",
         target: "school functions",
         operator: Operator.CONTAIN,
-        taskId: "SQUAD_4",
+        taskId: "LocalQA_4",
     }
 ]
 const GridPuzzle: PredefinedTask[] = [
@@ -267,8 +267,8 @@ const ComplexQA: PredefinedTask[] = [
 
 const LongFormText: PredefinedTask[] = [
     {
-        title: "Long Form Text Comprehension",
-        description: "Given a long text spanning multiple paragraphs, the goal is to answer what a specific phrase refers to.",
+        title: "Long Form Text Comprehension 1",
+        description: "The text discusses OPEC's oil production capacity. The goal is to determine what the term 'overhang' refers to in this context.",
         input: "OPEC's ability to produce more petroleum than it can sell is beginning to cast a shadow over world oil markets. Output from the Organization of Petroleum Exporting Countries is already at a high for the year and most member nations are running flat out. But industry and OPEC officials agree that a handful of members still have enough unused capacity to glut the market and cause an oil-price collapse a few months from now if OPEC doesn't soon adopt a new quota system to corral its chronic cheaters.\n\nAs a result, the effort by some oil ministers to get OPEC to approve a new permanent production-sharing agreement next month is taking on increasing urgency. The organization is scheduled to meet in Vienna beginning Nov.25. So far this year, rising demand for OPEC oil and production restraint by some members have kept prices firm despite rampant cheating by others. But that could change if demand for OPEC's oil softens seasonally early next year as some think may happen. OPEC is currently producing more than 22 million barrels a day, sharply above its nominal, self-imposed fourth-quarter ceiling of 20.5 million, according to OPEC and industry officials at an oil conference here sponsored by the Oil Daily and the International Herald Tribune.\n\nAt that rate, a majority of OPEC's 13 members have reached their output limits, they said. But it is estimated that at least three million barrels a day -- and possibly as much as seven million barrels a day -- of spare capacity still exists within OPEC. Most is concentrated in five Persian Gulf countries, including his own, Issam Al-Chalabi, Iraq's oil minister, told the conference Friday. He puts OPEC's current capacity at 28 million to 29 million barrels a day. That's higher than some other estimates. Ali Khalifa Al - Sabah, Kuwait's oil minister, recently estimated OPEC capacity at 25 million barrels a day. Either way, the overhang is big enough to keep delicately balanced oil markets on edge.",
         template: "At the end of the following passage:\n{input}\nWhat does the overhang refer to?\nYour answer should contain at most 5 words. If you cannot answer give an empty response.",
         target: "capacity",
@@ -276,8 +276,8 @@ const LongFormText: PredefinedTask[] = [
         taskId: "longFormTextComprehension_0",
     },
     {
-        title: "Long Form Text Comprehension",
-        description: "Given a long text spanning multiple paragraphs, the goal is to answer what a specific phrase refers to.",
+        title: "Long Form Text Comprehension 2",
+        description: "The text discusses the agricultural situation in Poland. The goal is to determine what farmers are unable to produce.",
         input: "The Polish rat will eat well this winter. Tons of delectably rotting potatoes, barley and wheat will fill damp barns across the land as thousands of farmers turn the state's buyers away. Many a piglet won't be born as a result, and many a ham will never hang in a butcher shop. But with inflation raging, grain in the barn will still be a safer bet for the private farmer than money in the bank. \n\nOnce again, the indomitable peasant holds Poland's future in his hands. Until his labor can produce a profit in this dying and distorted system, even Solidarity's sympathetic new government won't win him over. In coming months, emergency food aid moving in from the West will be the one buffer between a meat-hungry public and a new political calamity. Factory workers on strike knocked Poland's Communist bosses off balance last year; this year, it was the farmers who brought them down. In June, farmers held onto meat, milk and grain, waiting for July's usual state-directed price rises. The Communists froze prices instead. The farmers ran a boycott, and meat disappeared from the shops. On Aug. 1, the state tore up its controls, and food prices leaped. Without buffer stocks, inflation exploded. That was when the tame old Peasants' Party, desperate to live through the crisis, broke ranks with the Communists and joined with Solidarity in the East Bloc's first liberated government. \n\nBut by the time Solidarity took office in September, the damage was done. \"Shortageflation,\" as economists have come to call it, had gone hyper. The cost of raising a pig kept bounding ahead of the return for selling one. The farmers stayed angry. They still are. At dawn on a cool day, hundreds travel to the private market in Radzymin, a town not far from Warsaw, hauling pigs, cattle and sacks of feed that the state's official buyers can't induce them to sell. Here, they are searching for a higher price. In a crush of trucks and horse carts on the trodden field, Andrzej Latowski wrestles a screeching, overweight hog into the trunk of a private butcher's Polish Fiat. \"Of course it's better to sell private, \" he says, as the butcher trundles away. \"Why should anybody want to sell to them ? \" The young farmer makes money on the few hogs he sells here. He won't for long, because his old state sources of rye and potatoes are drying up. \"There's no feed,\" he says. \"You can't buy anything nowadays. I don't know why.\" \n\nEdward Chojnowski does. His truck is parked across the field, in a row of grain sellers. Like the others, it is loaded with rye, wheat and oats in sacks labeled \"Asbestos. Made in U.S.S.R.\" The farmer at the next truck shouts, \"Wheat! It's nice! It won't be cheaper! We sell direct!\" A heavy, kerchiefed woman runs a handful through her fingers, and counts him out a pile of zlotys. \"Country people breed pigs,\" says Mr.Chojnowski, leaning against the back of his truck. \"They can't buy feed from the state. There isn't enough. Some state middlemen come to buy from me. I sell -- a little. I am waiting. I have plenty more at home.\" On this morning, he doesn't sell much in Radzymin, either. At closing time, farmers cart out most of what they carted in.",
         template: "In the following passage:\n{input}\nWhat are farmers unable to produce?\nYour answer should contain at most 5 words. If you cannot answer give an empty response.",
         target: "pig",
@@ -285,8 +285,8 @@ const LongFormText: PredefinedTask[] = [
         taskId: "longFormTextComprehension_1",
     },
     {
-        title: "Long Form Text Comprehension",
-        description: "Given a long text spanning multiple paragraphs, the goal is to answer what a specific phrase refers to.",
+        title: "Long Form Text Comprehension 3",
+        description: "The text discusses a political scandal in Japan. The goal is to determine which industry is involved in the scandal.",
         input: "Yet another political scandal is racking Japan. But this time it's hurting opposition as well as ruling-party members. And as it unfolds, it's revealing some of the more tangled and seamier aspects of Japanese society. Already, the ruling Liberal Democratic Party's (LDP) demands that opposition members testify under oath in parliament have stalled one budget committee session and forced the committee to plan a special two-day investigation at the end of the month. But the scandal itself is so convoluted that ruling-party members are divided between those who want to pursue the matter in hope of undermining the opposition and those who favor leaving well enough alone. \"The opposition can be the most hurt because everyone already figures the LDP is that kind of beast, \" says Shigezo Hayasaka, former aide to LDP kingmaker Kakuei Tanaka and now an independent analyst. But, he adds, \"We can't tell where it will go at all because we're still in the middle of it.\" \n\nThis time, the scandal centers on donations made by the not- quite - mainstream pachinko parlor industry.Pachinko, a kind of pinball, is Japan's favorite form of quasi legal gambling. The donations so far appear to be small, especially compared with the huge sums that changed hands in the Recruit Co. influence-peddling scandal that plagued the ruling party last year. But the implications could be great. Pachinko is slightly on the shady side, often linked to the lower ranks of Japan's underworld and regularly at the top of annual lists of tax evaders.Recently the industry has faced the threat of new restrictions, and political donations may have been made with the intent to bribe.\n\nTo many Japanese, pachinko is benign or enticingly unsavory.Garish neon pachinko marquees blaze from the main streets and narrow alleys of cities and towns across the country.Devotees pass hours, watching the lights blink and listening to the metal balls ping, as much to gamble as to get a little time to be anonymous, alone with their thoughts.At 500 yen($3.60) for a handful of balls, pachinko is a common pastime, and has been since it took root as cheap entertainment in the years after World War II.But the total of all those pinging balls has created an industry with a reported annual income of 13 trillion yen(almost $92 billion), or nearly the size of Japan's vaunted automobile industry. And because the pachinko industry is regularly at the top of annual lists for tax evasion, some observers estimate the real income could be as much as 20 trillion yen. If that money were being taxed, it could bring the government a badly needed several trillion yen. In 1984, an attempt was made to crack down on the industry with tougher restrictions. Then, in 1988, a proposal to keep better track of income by selling prepaid cards for pachinko was fielded in parliament.",
         template: "In the following passage:\n{input}\nWhat industry is involved in the scandal ?\nYour answer should contain at most 5 words.If you cannot answer give an empty response.",
         target: "pachinko",

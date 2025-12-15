@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { IoArrowBack } from "react-icons/io5";
 import "./WelcomePage.css";
 import OptionBox from "./auxiliary/OptionBox";

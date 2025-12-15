@@ -1,7 +1,8 @@
 from .openai import ChatGPT
 import numpy as np
 import concurrent
-class ParallelizedModel:
+from cafga.models.MaskedModels import MaskedModel
+class ParallelizedModel: # Utility class to parallelize model calls for API based models
     def __init__(self, model, n_threads):
         self.model = model
         self.n_threads = n_threads

@@ -1,13 +1,14 @@
 import pickle
-
+import numpy as np
+from typing import Optional
 class AssignedInput: 
     
     def __init__(
         self,
         input_segments: list[str],
         group_assignments: list[int],
-        direction = None,
-        sample_name = None,
+        direction: Optional[str] = None,
+        sample_name: Optional[str] = None,
     ):
         self.input_segments = input_segments
         self.group_assignments = group_assignments
@@ -35,14 +36,22 @@ class ExplainedInput():
         group_assignments: list[int],
         attributions: list[list[float]],
         mask_value: str | list[str],
-        merge_masks=False,
+        merge_masks: bool = False,
+        bias: Optional[float] = None,
+        local_dataset: Optional[tuple[np.ndarray, np.ndarray]] = None,
+        test_set: Optional[tuple[np.ndarray, np.ndarray]] = None,
+        time_taken: Optional[float] = None,
     ):
         self.input_segments = input_segments
         self.template = template
         self.group_assignments = group_assignments
         self.attributions = attributions
+        self.bias = bias
         self.mask_value = mask_value
         self.merge_masks = merge_masks
+        self.local_dataset = local_dataset
+        self.test_set = test_set
+        self.time_taken = time_taken
 
     def get_attributions(self):
         """A simple getter method that cleans up the case when the model output is one-dimensional."""

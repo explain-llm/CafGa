@@ -89,7 +89,6 @@ class TaskHandler:
             self.n_allowed_samples = n_allowed_samples_with_NLI
             self.model.max_tokens = max_tokens_with_NLI
         else:
-            print(f"Operator {task.operator.value} not in NLI_fns")
             self.model.n_samples = n_responses
             self.n_allowed_samples = n_allowed_samples
             self.model.max_tokens = max_tokens
@@ -125,6 +124,7 @@ class TaskHandler:
         )
         # Add the scalarized value to the original responses as a string
         original_prediction.append(str(scalarized))
+        print("Computed attributions")
         return attributions, original_prediction, computation_time, n_generated_samples
 
     def get_evaluation(

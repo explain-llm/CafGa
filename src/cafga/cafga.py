@@ -1,15 +1,16 @@
 import enum
 import numpy as np
 import pandas as pd
-from shap import KernelExplainer #, PartitionExplainer
+# from shap import KernelExplainer #, PartitionExplainer
 # from shap.maskers import Masker
 import matplotlib.pyplot as plt
 import os
 from os.path import join as pjoin
 
 from . import util
-from .models import load_model
+from .models import load_model, MaskedModel
 from .containers import AssignedInput, ExplainedInput, EvaluatedExplanation
+from .explainers import CaptumKernelShap, CaptumLime, KernelShap
 
 
 class Operator(enum.Enum):
@@ -23,8 +24,11 @@ class Operator(enum.Enum):
     # CONTRADICT = "CONTRADICT"
 
 
+available_explainers = ["KernelSHAP", "CaptumKernelSHAP", "CaptumLIME"]
+
+
 class CafGa:
-    def __init__(self, model, model_params=None, explainer="KernelSHAP", explainer_params=None):
+    def __init__(self, model, explainer="KernelSHAP", model_params=None, explainer_params=None):
         """
         Create a CafGa object.
 
@@ -43,7 +47,8 @@ class CafGa:
         model_params: dict
             Parameters for the predefined model. (Not used if a custom model is provided)
         explainer: str
-            The explainer method to be used. Currently only KernelSHAP is supported.
+            The explainer method to be used. Currently the captum implementation of LIME and KernelSHAP as well as the original implementation of KernelSHAP are supported.
+            The options are ["KernelSHAP", "CaptumKernelSHAP", "CaptumLIME"]. Default is "KernelSHAP".
         """
         if type(model) == str:
             if model_params is None:
@@ -52,131 +57,20 @@ class CafGa:
         else:
             self.model = model
 
-    def get_original_predicitons(self, input_segments : list[str]):
-        input = "".join(input_segments)
-        return self.f([input])
-
-    def mask_to_input(self, mask):
-        input = ""
-        prev_was_masked = False
-        for i in range(self.input_length):
-            # If mask is False, then the input is replaced with the mask value for that input
-            # Else the input is included as is
-            if not mask[self.group_assignments[i]]:
-                if not prev_was_masked or (not self.merge_masks):
-                    # Place the mask value if 1. not merging masks or 2. merging masks but the previous input was not masked
-                    input += self.mask_value[i]
-                prev_was_masked = True
-            else:
-                input += self.input[i]
-                prev_was_masked = False
-
-        return input
-
-    def mask_to_output(self, mask_list):
-        input_list = [self.mask_to_input(mask) for mask in mask_list]
-        return self.f(input_list)
-
-    def init_scalarizer(self, scalarizer):
-        if type(scalarizer) == list:
-            # the model returns a string and the scalarizer is from the predefined list
-            def predefined_scalarizer(responses):
-                results = []
-                for operator, target in scalarizer:
-                    results.append(util.evaluate_outcome(responses, operator, target))
-                return results
-
-            self.scalarizer = predefined_scalarizer
+        self.is_captum = "captum" in explainer.lower()
+        self.masked_model = MaskedModel(self.model, explainer_is_captum=self.is_captum)
+        self.explainer_name = explainer.lower()
+        if self.explainer_name == "captumkernelshap":
+            self.explainer = CaptumKernelShap(self.masked_model.masks_to_output)
+        elif self.explainer_name == "captumlime":
+            self.explainer = CaptumLime(self.masked_model.masks_to_output)
+        elif self.explainer_name == "kernelshap":
+            self.explainer = KernelShap(self.masked_model.masks_to_output)
+            self.masked_model.output_numpy = True
         else:
-            self.scalarizer = scalarizer
-        self.uses_scalarizer = self.scalarizer is not None
-        if self.uses_scalarizer:
-            dummy_output = self.scalarizer([""])
-        else:
-            dummy_output = self.model([""])[0]
-        if hasattr(dummy_output, "__len__") :
-            self.scalarizer_output_dim = len(dummy_output)
-        else:
-            self.scalarizer_output_dim = 1
+            raise ValueError(f"Explainer {self.explainer_name} not recognized. The available explainers are: {available_explainers}")
 
-    def _explain(
-        self,
-        input: list[str],
-        group_assignments: list[int],
-        mask_value: str | list[str],
-        merge_masks=False,
-        partition_tree=None,
-        n_allowed_samples=512,
-        track_execution_data=False,
-    ):
-        """Uses the KernelExplainer from SHAP to explain the model's predictions on the input groups.
-
-        Parameters
-        ----------
-        input : The input to the model in the form of a list of strings or token_ids (as pytorch tensor).
-
-        group_assignments : A list of integers representing the group assignments of the input, where group_assignments[i] is the group of input[i].
-
-        mask_value : The value (string or token) to use to mask the input when the group is removed.
-        If provided with a list of strings, the input will be masked with the corresponding string.
-        E.g. the i-th input will be masked with mask_value[i] (thus len(mask_value) should be equal to len(input)).
-
-        merge_masks : Whether to merge consecutive masks into a single mask. Default is False.
-
-        track_execution_data : Whether to track the time taken and number of samples generated during the computation. Default is False.
-
-        Returns
-        -------
-        shap_values : The SHAP values for the input groups.
-        If track_execution_data is True, it also returns:
-        total_time : The time taken to compute the SHAP values.
-        numbers_of_samples_generated : The number of samples generated during the computation. (<= n_allowed_samples+2)
-
-        """
-        self.input = input
-        self.input_length = len(input)
-        self.group_assignments = util.standardize_groups(group_assignments)
-        if type(mask_value) != list:
-            # Use a list in all cases to simplify the masking process
-            mask_value = [mask_value] * self.input_length
-        self.mask_value = mask_value
-        self.merge_masks = merge_masks
-        self.groups = set(self.group_assignments)
-        self.n_groups = len(self.groups)
-        self.track_execution_data = track_execution_data
-
-        if track_execution_data:
-            import time
-            self.numbers_of_samples_generated = 0
-            start = time.time()
-
-        if partition_tree is not None:
-            raise NotImplementedError("Using the partition tree is not supported in this version.")
-            # Received a partition tree -> use PartitionExplainer on top of given groups
-            masker = self.get_masker_for_partitionshap(partition_tree)
-            sub_explainer = PartitionExplainer(
-                self.f, masker
-            )
-            # All that partition shap needs is the number of inputs and the partition tree
-            # The actual input is produced by the masker.
-            # Hence, we pass in a dummy input whose only purpose is to declare the number of inputs
-
-            self.shap_values = sub_explainer(["dummy"]).values[0]
-        else:
-            # No partition tree -> use KernelExplainer on the groups
-            empty_mask = pd.Series([False] * self.n_groups)
-            full_mask = pd.Series([True] * self.n_groups)
-            self.shap_values = KernelExplainer(self.mask_to_output, empty_mask).shap_values(
-                full_mask, 
-                nsamples=n_allowed_samples
-            )
-        if track_execution_data:
-            end = time.time()
-            total_time = end - start
-            return self.shap_values, total_time, self.numbers_of_samples_generated
-
-        return self.shap_values
-
+ 
     def explain(
         self,
         input: str = None,
@@ -186,9 +80,13 @@ class CafGa:
         mask_value : str = "",
         merge_masks : bool = True,
         scalarizer = None,
+        target = None,
         template : str = None,
         n_allowed_samples = 256,
-    ):
+        n_test_samples = 0,
+        return_perturbations : bool = False,
+        track_execution_data : bool = False,
+    ) -> ExplainedInput:
         """
         Explain the model's prediction on the given input under the group assignment method proivded.
 
@@ -199,21 +97,28 @@ class CafGa:
         assignment_method: str 
             The name of a predefined assignment method. The options are "word", "sentence" and "paragraph". ("syntax-tree" is not available in this version).
         segmented_input: list[str]
-            The segments of the input to be explained. Custom assignments must be provided alongside this. This can be used to run the explanation on a custom assignment method. 
+            The segments of the input to be explained. Custom assignments must be provided alongside this. This can be used to run the explanation on a custom assignment method. "".join(segmented_input) should be equal to input.
         custom_assignments: list[int]
             The custom group assignments for the segmented_input. This must be provided alongside segmented_input. The assignments should be formatted such that custom_assignments[i] is the group that segmented_input[i] belongs to.
-        mask_value: str
-            The value to use to mask the input when the group is removed.
+        mask_value: str | list[str]
+            The value to use to mask the input when the group is removed. If a list of strings is provided, the i-th group will be masked with mask_value[i].
         merge_masks: bool
             Whether to merge consecutive masks into a single mask.
         scalarizer:
             The scalarizer to use to convert the model's output (string) to a list of floats (each representing a prediction derived from the model's reponse). If None, it is assumed that the model provided at initialization returns a float as output.
             To use a one of the provided scalarizers pass a list of tuples [(operator, target)] where operator is one of the predefined operators and target is the target value to be used in the operator.
+            Since captum explainers do not support explaining multiple outputs at once, only one scalarizer may be provided when using captum explainers.
         template: str
             If you have a template that the input should be pasted into before being passed to the model, provide it here.
             This assumes that the model you provided has a set_template method that takes a string as input.
         n_allowed_samples: int
-            The number of samples to generate for the KernelExplainer. Default is 256.
+            The maximum number of perturbation samples to generate. If the n_allowed_samples is greater than the number of possible perturbations (2^n_groups) then the number of generated samples will be 2^n_groups.
+        n_test_samples: int
+            The number of samples to return for testing. If n_test_samples == 0 no samples will be returned. If n_test_samples > 0 the ExplainedInput will have a test set attribute to access the test set.
+        return_perturbations: bool
+            Whether to return the perturbations generated during the explanation. If true, the ExplainedInput will have a local_dataset attribute to access the perturbations and associated (scalarized) model predictions used to generate the explanation.
+        track_execution_data: bool
+            Whether to track execution data such as the time taken for the explanation.
 
         Returns
         -------
@@ -239,35 +144,41 @@ class CafGa:
             input_segments = segmented_input
             assignments = custom_assignments
 
-        self.init_scalarizer(scalarizer)
-
-        def f(input_list):
-            model_predictions = self.model(input_list)
-            if self.uses_scalarizer:
-                scalarized_predictions = np.zeros((len(input_list), self.scalarizer_output_dim))
-                for i in range(len(input_list)):
-                    scalarized_predictions[i] = self.scalarizer(model_predictions[i])
-                return scalarized_predictions
+        self.masked_model.define_task(
+            input_segments,
+            assignments,
+            template,
+            scalarizer,
+            mask_value,
+            merge_masks,
+        )
+        total_time = None
+        if track_execution_data:
+            import time
+            start = time.time()
+        full_mask = self.masked_model.get_full_mask()
+        if target is None and self.is_captum:
+            target = self.masked_model.get_original_prediction()
+        explanation_output = self.explainer.explain(full_mask, target = target, n_samples = n_allowed_samples, n_test_samples = n_test_samples)
+        if track_execution_data:
+            end = time.time()
+            total_time = end - start
+        if not return_perturbations:
+            explanation_output["local_dataset"] = None
+        explanation = explanation_output["explanation"]
+        if not self.is_captum:
+            if self.masked_model.scalarizer_output_dim > 1:
+                # Transpose from (n_groups, n_outputs) to (n_outputs, n_groups)
+                explanation = [[attribution[d] for attribution in explanation] for d in range(self.masked_model.scalarizer_output_dim)]
+                if target is not None:
+                    explanation = [explanation[target]]
             else:
-                return model_predictions
-
-        self.f = f
-        if template is not None:
-            try:
-                self.model.set_template(template)
-            except Exception as e:
-                print("Encountered the following error when trying to set the template:")
-                print(e)
-                print("If you would like to use a template, your model should have a function: \"set_template\"")
-        explanation = self._explain(input_segments, assignments, mask_value, merge_masks, n_allowed_samples=n_allowed_samples)
-        if self.scalarizer_output_dim > 1:
-            # Transpose from (n_groups, n_outputs) to (n_outputs, n_groups)
-            explanation = [[attribution[d] for attribution in explanation] for d in range(self.scalarizer_output_dim)]
+                # Only have one output for which we generate attributions
+                explanation = [explanation] 
         else:
-            # Only have one output for which we generate attributions
-            explanation = [explanation] 
+            explanation = explanation.detach().cpu().numpy()
         explained_input = ExplainedInput(
-            input_segments, template, assignments, explanation, mask_value, merge_masks
+            input_segments, template, assignments, explanation, mask_value, merge_masks, bias=explanation_output.get("bias", None), local_dataset=explanation_output.get("local_dataset", None), test_set=explanation_output.get("test_set", None), time_taken=total_time
         )
         self.most_recent_explanation = explained_input
         return explained_input
